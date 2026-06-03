@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Apply Pilot",
+  "description": "Generate tailored cover letters with AI in seconds.",
+  "version": "1.0",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_icon": "images/ai-content-generator.png",
+    "default_title": "Open Cover Letter Generator"
+  },
+  "permissions": ["sidePanel"],
+  "side_panel": {
+    "default_path": "sidepanel/index.html"
+  }
+}
