@@ -7,7 +7,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_icon": "images/ai-content-generator.png",
+    "default_icon": "images/apply-pilot-store-icon.png",
     "default_title": "Open Cover Letter Generator"
   },
   "permissions": ["sidePanel"],

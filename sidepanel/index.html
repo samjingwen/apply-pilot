@@ -4,25 +4,24 @@
     <link rel="stylesheet" type="text/css" href="index.css" />
   </head>
   <body>
-    
     <div class="upload-row">
-      <label for="file-upload" class="upload-btn">Upload resume</label>
-      <input id="file-upload" type="file" hidden />
+      <input id="file-upload" type="file" accept="application/pdf" hidden />
       <div id="file-name" class="file-name-text"></div>
+      <label for="file-upload" class="upload-btn">Upload resume</label>
     </div>
-   
+
     <textarea
       id="input-prompt"
-      placeholder='Paste job description here'
+      placeholder="Paste job description here"
       cols="30"
       rows="5"
     ></textarea>
 
     <div class="actions">
-      <button id="button-prompt" class="primary">Run</button>
+      <button id="button-prompt" class="primary" disabled>Run</button>
       <button id="button-reset" class="secondary" disabled>Reset</button>
     </div>
-    
+
     <div id="response" class="text" hidden></div>
     <div id="loading" class="text" hidden><span class="blink">...</span></div>
     <div id="error" class="text" hidden></div>
