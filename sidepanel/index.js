@@ -10,7 +10,9 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
 const inputPrompt = document.body.querySelector("#input-prompt");
 const buttonPrompt = document.body.querySelector("#button-prompt");
 const buttonReset = document.body.querySelector("#button-reset");
+const buttonCopyResponse = document.body.querySelector("#button-copy-response");
 
+const elementResponseContainer = document.body.querySelector("#response-container");
 const elementResponse = document.body.querySelector("#response");
 const elementLoading = document.body.querySelector("#loading");
 const elementError = document.body.querySelector("#error");
@@ -82,14 +84,14 @@ async function reset() {
 buttonReset.addEventListener("click", () => {
   hide(elementLoading);
   hide(elementError);
-  hide(elementResponse);
+  hide(elementResponseContainer);
   reset();
 
   pdfText = "";
   inputPrompt.value = "";
   fileUpload.value = "";
   fileName.textContent = "";
-  elementResponse.innerHTML = "";
+  elementResponse.value = "";
   elementError.textContent = "";
 
   buttonReset.setAttribute("disabled", "");
@@ -147,10 +149,31 @@ buttonPrompt.addEventListener("click", async () => {
       expectedInputs: [{ type: "text", languages: ["en"] }],
       expectedOutputs: [{ type: "text", languages: ["en"] }],
     };
-    const response = await runPrompt(prompt, params, showResponse);
-    showResponse(response);
+    const response = await runPrompt(prompt, params, showStreamingResponse);
+    showEditableResponse(response);
   } catch (e) {
     showError(e);
+  }
+});
+
+buttonCopyResponse.addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(elementResponse.value.trim());
+
+    const originalHTML = buttonCopyResponse.innerHTML;
+    
+    buttonCopyResponse.textContent = "✓";
+    buttonCopyResponse.setAttribute("aria-label", "Copied");
+    buttonCopyResponse.setAttribute("title", "Copied");
+
+    setTimeout(() => {
+      buttonCopyResponse.innerHTML = originalHTML;
+      buttonCopyResponse.setAttribute("aria-label", "Copy response");
+      buttonCopyResponse.setAttribute("title", "Copy response");
+    }, 1200);
+  } catch (error) {
+    console.error("Failed to copy response:", error);
+    showError("Failed to copy response to clipboard.");
   }
 });
 
@@ -193,20 +216,29 @@ function updatePromptButtonState() {
 
 function showLoading() {
   buttonReset.removeAttribute("disabled");
-  hide(elementResponse);
+  hide(elementResponseContainer);
   hide(elementError);
   show(elementLoading);
 }
 
-function showResponse(response) {
+function showStreamingResponse(response) {
   hide(elementLoading);
-  show(elementResponse);
-  elementResponse.innerHTML = DOMPurify.sanitize(marked.parse(response));
+  show(elementResponseContainer);
+  hide(buttonCopyResponse);
+  elementResponse.setAttribute("readonly", "");
+  elementResponse.value = response;
+}
+
+function showEditableResponse(response) {
+  showStreamingResponse(response);
+  show(buttonCopyResponse);
+  elementResponse.removeAttribute("readonly");
+  elementResponse.focus();
 }
 
 function showError(error) {
   show(elementError);
-  hide(elementResponse);
+  hide(elementResponseContainer);
   hide(elementLoading);
   elementError.textContent = error;
 }

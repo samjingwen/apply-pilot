@@ -10,7 +10,7 @@
     "default_icon": "images/apply-pilot-store-icon.png",
     "default_title": "Open Cover Letter Generator"
   },
-  "permissions": ["sidePanel"],
+  "permissions": ["sidePanel", "clipboardWrite"],
   "side_panel": {
     "default_path": "sidepanel/index.html"
   }
