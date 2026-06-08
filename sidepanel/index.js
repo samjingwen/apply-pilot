@@ -1,6 +1,5 @@
 import * as pdfjsLib from "pdfjs-dist";
-import DOMPurify from "dompurify";
-import { marked } from "marked";
+import { createTextPDF } from "./pdf-util.js";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   "./pdf.worker.mjs",
@@ -11,6 +10,7 @@ const inputPrompt = document.body.querySelector("#input-prompt");
 const buttonPrompt = document.body.querySelector("#button-prompt");
 const buttonReset = document.body.querySelector("#button-reset");
 const buttonCopyResponse = document.body.querySelector("#button-copy-response");
+const buttonExportPDF = document.body.querySelector("#button-export-pdf");
 
 const elementResponseContainer = document.body.querySelector("#response-container");
 const elementResponse = document.body.querySelector("#response");
@@ -177,6 +177,32 @@ buttonCopyResponse.addEventListener("click", async () => {
   }
 });
 
+buttonExportPDF.addEventListener("click", async () => {
+  try {
+    const responseText = elementResponse.value.trim();
+
+    if (!responseText) {
+      showError("There is no response to export.");
+      return;
+    }
+
+    const pdfBlob = await createTextPDF(responseText);
+    const pdfURL = URL.createObjectURL(pdfBlob);
+    const link = document.createElement("a");
+
+    link.href = pdfURL;
+    link.download = "cover-letter.pdf";
+    document.body.append(link);
+    link.click();
+    link.remove();
+
+    setTimeout(() => URL.revokeObjectURL(pdfURL), 1000);
+  } catch (error) {
+    console.error("Failed to export PDF:", error);
+    showError("Failed to export response as PDF.");
+  }
+});
+
 function formatCoverLetterPrompt(resumeText, jobDescription) {
   return `
 You are an expert career coach and cover letter writer.
@@ -225,6 +251,7 @@ function showStreamingResponse(response) {
   hide(elementLoading);
   show(elementResponseContainer);
   hide(buttonCopyResponse);
+  hide(buttonExportPDF);
   elementResponse.setAttribute("readonly", "");
   elementResponse.value = response;
 }
@@ -232,6 +259,7 @@ function showStreamingResponse(response) {
 function showEditableResponse(response) {
   showStreamingResponse(response);
   show(buttonCopyResponse);
+  show(buttonExportPDF);
   elementResponse.removeAttribute("readonly");
   elementResponse.focus();
 }

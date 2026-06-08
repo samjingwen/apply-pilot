@@ -163,3 +163,7 @@ textarea {
 .icon-button:hover {
   background: #111;
 }
+
+.icon-button-below {
+  top: 48px;
+}

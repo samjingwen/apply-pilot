@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Apply Pilot",
   "description": "Generate tailored cover letters with AI in seconds.",
-  "version": "1.1",
+  "version": "1.2",
   "background": {
     "service_worker": "background.js"
   },
